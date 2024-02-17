@@ -35,12 +35,12 @@ permissions:
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
   group: "pages"
-  cancel-in-progress: in-progress
+  cancel-in-progress: false
 
 jobs:
-  # Builtin - job
+  # Build job
   build:
-    runs-on: ubuntu-latest/chromebook
+    runs-on: ubuntu-latest
     env:
       MDBOOK_VERSION: 0.4.21
     steps:
@@ -58,15 +58,15 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: slashpage./book
+          path: ./book
 
   # Deployment job
-  deploy: CODESPACE 
-    environment: tree.md
+  deploy:
+    environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: builtin
+    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
